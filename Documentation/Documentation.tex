@@ -14,7 +14,6 @@
     linkcolor=black,
     urlcolor=black
 }
-\urlstyle{same}
 
 \author{Ben Miller}
 \title{CSE321 Project 2}
@@ -24,8 +23,44 @@
 \tableofcontents
 \pagebreak
 \section{Specifications}
+% This is the what, not the how. Should describe...
+	% Inputs
+	% Outputs
+	% Functions
+This is the documentation for a simple security system. It will lock or unlock based off of a four digit pass code, which for the purposes of this assignment will be 9407. The combination will be entered via a 4x4 matrix keypad. An LED will act as the output, lighting up depending on the validity of an input combination. Additionally, an attached LCD display will show whether the system is currently locked or unlocked.
+% Will there be two LEDs? How will you differentiate a correct or incorrect response?  
 \pagebreak
 \section{Features}
+As previously mentioned, this will be a security system that checks for an input combination of 9407. Depending on the correctness of the user's input, the system will display difference pieces of information.\\~\\
+The system has four states it will ultimately check for.
+\begin{itemize}
+	\item An incorrect input with a locked system.
+	\item An incorrect input with an unlocked system.
+	\item A correct input with a locked system.
+	\item A correct input with an unlocked system.
+\end{itemize}
+There is also a fifth state which will reset the current input; this will be described in further detail below. \\~\\
+Below is how the system would react when presented with one of the above scenarios.
+\begin{enumerate}
+	\item An incorrect input with a locked system.
+	\begin{itemize}
+		\item Nothing happens, with the system remaining locked. The LCD will still display a locked mode and the LED will inform the user an incorrect input was provided. This will be done by a flashing LED.
+	\end{itemize}
+	\item An incorrect input with an unlocked system. 
+	\begin{itemize}
+		\item The system will lock. This will allow easy locking of the system by the user; they can simply input a random series of numbers. The LCD will change its display from unlocked to locked, and the LED will inform the user that an incorrect input was provided.
+	\end{itemize}
+	\item A correct input with a locked system.
+	\begin{itemize}
+		\item Of course, should a correct input be provided to an already locked system, the system will unlock. The LCD will change from locked to unlocked, and the LED will indicate a correct input. This will be shown by a steady LED.
+	\end{itemize}
+	\item A correct input with an unlocked system.
+	\begin{itemize}
+		\item Similarly to the first state, should a correct input be given to an unlocked system nothing will happen. The system will remain unlocked, with the LCD maintaining its display and the LED informing the user of a correct input.
+	\end{itemize}
+\end{enumerate}
+\pagebreak
+It was described above that there was a fifth state that will act as a ``password reset.'' This is true, and will be recognized by the system by a reserved input: 0000. This means that the system has two specific combinations it will recognize: the password itself, 9407, and the password reset key, 0000. Should at any moment four consecutive ``zeroes'' be inputted, the system will clear its memory. The LED will \textit{not} flash, and the LCD will \textit{not} change its display. This can occur at any point, regardless of how many values had previously been sent.\\~\\
 \pagebreak
 \section{Applications}
 \pagebreak

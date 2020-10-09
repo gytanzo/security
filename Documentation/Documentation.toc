@@ -1,8 +1,8 @@
 \contentsline {section}{\numberline {1}Specifications}{3}{section.1}%
 \contentsline {section}{\numberline {2}Features}{4}{section.2}%
-\contentsline {section}{\numberline {3}Applications}{5}{section.3}%
-\contentsline {section}{\numberline {4}Block Diagram}{6}{section.4}%
-\contentsline {section}{\numberline {5}Functionality Diagram}{7}{section.5}%
-\contentsline {section}{\numberline {6}Bill of Materials}{8}{section.6}%
-\contentsline {section}{\numberline {7}Schematic Diagram}{9}{section.7}%
-\contentsline {section}{\numberline {8}Test Plan}{10}{section.8}%
+\contentsline {section}{\numberline {3}Applications}{6}{section.3}%
+\contentsline {section}{\numberline {4}Block Diagram}{7}{section.4}%
+\contentsline {section}{\numberline {5}Functionality Diagram}{8}{section.5}%
+\contentsline {section}{\numberline {6}Bill of Materials}{9}{section.6}%
+\contentsline {section}{\numberline {7}Schematic Diagram}{10}{section.7}%
+\contentsline {section}{\numberline {8}Test Plan}{11}{section.8}%

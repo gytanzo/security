@@ -25,6 +25,15 @@ Summary of File:
 int main()
 {
     while (true) {
-
+        /* 
+        Checklist start
+        - Follow the flowchart in Documentation.pdf, it summarizes the logic this program should take pretty well
+        - Make sure to store the previous number and count repeats, this will make programming the password reset easier
+        - Recall that there are two reserved passwords: 9407 and 0000
+        - Try not to make the code too ugly
+        Checklist end
+        - Expected start date (on the programming portion): 10/10, if not that then the 16th
+        - Currently working on documentation, so I can't exactly start this part yet
+         */
     }
 }

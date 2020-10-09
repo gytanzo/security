@@ -60,17 +60,37 @@ Below is how the system would react when presented with one of the above scenari
 	\end{itemize}
 \end{enumerate}
 \pagebreak
-It was described above that there was a fifth state that will act as a ``password reset.'' This is true, and will be recognized by the system by a reserved input: 0000. This means that the system has two specific combinations it will recognize: the password itself, 9407, and the password reset key, 0000. Should at any moment four consecutive ``zeroes'' be inputted, the system will clear its memory. The LED will \textit{not} flash, and the LCD will \textit{not} change its display. This can occur at any point, regardless of how many values had previously been sent.\\~\\
+It was described above that there was a fifth state that will act as a ``password reset.'' This is true, and will be recognized by the system by a reserved input: 0000. This means that the system has two reserved combinations: the password itself, 9407, and the password reset key, 0000. Should at any moment four consecutive ``zeroes'' be inputted, the system will clear its memory. The LED will \textit{not} flash, and the LCD will \textit{not} change its display. This can occur at any point, regardless of how many values had previously been sent (i.e. 9-0-0-0-0 resets the memory as does 9-4-7-0-0-0-0).\\~\\
+Lastly, the system can, provided power, run indefinitely. While the LED itself will not endlessly remain lit up (it will remain lit for approximately 10 seconds), the LCD display \textit{will} remain on and functional until the power source is removed.
 \pagebreak
 \section{Applications}
+While the applications of such a simplistic security system are admittedly limited, there are some realistic applications that can be considered. A simple system such as this one can be used for minimalistic security clearance at public facilities (e.g. a supermarket). \\~\\
+Given the uncomplicated implementation of the design, it can additionally be expanded upon quite easily. Changing the four-digit pass-code to an eight-digit one would be relatively straightforward, and more advanced hardware could allow for more than just the five previously described states. More advanced hardware, such as a better LCD display in conjunction with a more powerful central system, could allow multiple passwords and users to be associated with them. \\~\\
+In summary, in its current state the industrial and retail applications of such a system are too limited to be of practical use; it can be brute forced due to its lack of a input cool-down, ignoring the abundantly obvious fact that such rudimentary hardware could simply be ignored. However, this simplicity is arguably an advantage, allowing for a large amount of room for expansion and improvement.
 \pagebreak
 \section{Block Diagram}
+To be added. Currently waiting on a Piazza post.
 \pagebreak
 \section{Functionality Diagram}
+\includegraphics[width=\linewidth]{Flowchart}\\
+\href{https://i.imgur.com/97heoRu.png}{\underline{Click here}} for a zoom-in-able imgur version of this image.
 \pagebreak
 \section{Bill of Materials}
+\begin{itemize}
+	\item (An unspecified amount of) LEDs
+	\item A Grove 16x2 LCD display
+	\item A breadboard with jumper cables and wires
+	\item A Nucleo-L4R5ZI
+	\item A USB A to Micro-USB B cable
+	\item Resistors
+	\item A 4x4 matrix array keypad
+	\item Access to a desktop computer (software being used: \LaTeX and MBed Studio)
+% Maybe change this? I dunno, it seems kind of barebones. It genuinely *is* all I can think of though.
+\end{itemize}
 \pagebreak
 \section{Schematic Diagram}
+To be added. Currently waiting on a Piazza post.
 \pagebreak
 \section{Test Plan}
+To be added. 
 \end{document}

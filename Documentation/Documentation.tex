@@ -70,7 +70,7 @@ Given the uncomplicated implementation of the design, it can additionally be exp
 In summary, in its current state the industrial and retail applications of such a system are too limited to be of practical use; it can be brute forced due to its lack of a input cool-down, ignoring the abundantly obvious fact that such rudimentary hardware could simply be ignored. However, this simplicity is arguably an advantage, allowing for a large amount of room for expansion and improvement.
 \pagebreak
 \section{Block Diagram}
-To be added. Currently waiting on a Piazza post.
+To be added. Currently waiting additional provided examples.
 \pagebreak
 \section{Functionality Diagram}
 \includegraphics[width=\linewidth]{Flowchart}\\
@@ -78,20 +78,41 @@ To be added. Currently waiting on a Piazza post.
 \pagebreak
 \section{Bill of Materials}
 \begin{itemize}
-	\item (An unspecified amount of) LEDs
+	\item LEDs
 	\item A Grove 16x2 LCD display
 	\item A breadboard with jumper cables and wires
 	\item A Nucleo-L4R5ZI
 	\item A USB A to Micro-USB B cable
 	\item Resistors
 	\item A 4x4 matrix array keypad
-	\item Access to a desktop computer (software being used: \LaTeX and MBed Studio)
+	\item Access to a desktop computer (software being used: \LaTeX{ }and MBed Studio)
 % Maybe change this? I dunno, it seems kind of barebones. It genuinely *is* all I can think of though.
+% I think this is just how bill of materials are supposed to look man.
 \end{itemize}
 \pagebreak
 \section{Schematic Diagram}
-To be added. Currently waiting on a Piazza post.
+To be added. Currently waiting additional provided examples.
 \pagebreak
 \section{Test Plan}
-To be added. 
+The best way to test a system such as this is to go through all (in this case five) of the system's states and ensure they are functioning properly. \\~\\
+The order of the tests described below assumes that the system began or is currently in a locked state. Additionally, the reset button should be pressed prior to testing to ensure that the memory is cleared. 
+\begin{enumerate}
+	\item Since we had just pressed the reset button, it is most convenient to begin testing here. A password reset can be done at four points: 0/4 digits entered, 1 digit entered, 2 digits entered, and 3 digits entered. Since the memory gets reset after the fourth digit is processed, 0 digits entered and 4 digits entered are functionally identical. A test plan to test these four conditions is detailed below.
+	\begin{itemize}
+		\item 0/4 digits: At this state, the reset button shouldn't do anything. A pass for this test would be the system not crashing. 
+		\item 1 digit: Enter numbers in this order: 9-A-4-0-7. If this is recognized as an incomplete input, the test has been passed. For an incomplete input, there should be no feedback from the system for as far as it is aware, only three values have been provided. 
+		\item 2 digits: Enter numbers in this order: 9-4-A-0-7. Similarly to the single digit test case, if this is recognized as an incomplete input the test has been passed.
+		\item 3 digits: Enter numbers in this order: 9-4-0-A-7. Once again, if this is recognized as an incomplete input the test has been passed.
+	\end{itemize}
+	\item Next, we should test that the system remains locked with an invalid input. Since the system should remained locked if provided any one of 9,999 different combinations, a couple different pins should be tested for thoroughness. Some good values to test are: 9406, 9408, 0000, 9999, 2994, 9542, and 5826. The reasoning behind each of these is below. All seven of these numbers should \textit{fail}. If they do, you can move on to the next test. 
+	\begin{itemize}
+		\item 9406 and 9408 are respectively the integers one smaller and one larger than the correct input. This tests to ensure that the system doesn't check for a \textit{range} of correct values, but is rather looking for a singular specific input. 
+		\item 0000 and 9999 are respectively the smallest and largest inputs possible given four numbers. This ensures that both small and large numbers can fail.
+		\item 2994, 9542, and 5826 are three randomly generated numbers and just serve to enlarge the sample size.
+	\end{itemize}
+	\item Afterwards, we should test if the system can unlock safely. This test is quite easy to undertake; just input 9407. If the system correctly unlocks, you may move on to the next test. 
+	\item The system should now be unlocked. For the next test, input the correct input (9407) once again. If nothing happens (besides the LED indicating a correct input), the system is functioning correctly, and you may move on to the next test.
+	\item Finally, we should test that an unlocked system can lock correctly when provided an invalid input. Similarly to the second test, for thoroughness it is wise to test a wide range of values. Some good values to test are: 9406, 9408, 0000, 9999, 6441, 8583, and 3427. The reasoning for these values is identical to those from the first test. 
+\end{enumerate}~\\
+Should all of these test be passed, the system has passed inspection and works completely as requested.
 \end{document}

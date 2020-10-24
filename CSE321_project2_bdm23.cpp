@@ -20,13 +20,22 @@ Summary of File:
 
 
 #include "mbed.h"
+#include "1802.cpp"
+
+CSE321_LCD LCD();
+
+
 
 // main() runs in its own thread in the OS
 int main()
 {
-    while (true) {
-        /* 
-        Checklist start
+    LCD().begin();
+    
+    return 0;
+}
+
+/*
+Checklist start
         - Follow the flowchart in Documentation.pdf, it summarizes the logic this program should take pretty well
         - Make sure to store the previous number and count repeats, this will make programming the password reset easier
         - Recall that there are two reserved passwords: 9407 and 0000
@@ -34,6 +43,4 @@ int main()
         Checklist end
         - Expected start date (on the programming portion): 10/10, if not that then the 16th
         - Currently working on documentation, so I can't exactly start this part yet
-         */
-    }
-}
+*/

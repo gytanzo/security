@@ -24,12 +24,97 @@ Summary of File:
 
 CSE321_LCD LCD(16,2,LCD_5x8DOTS,PB_9,PB_8); // PB_9 = SDA, PB_8 = SCL
 
+void c1isr(void);
+void c2isr(void);
+
+EventQueue qu(32 * EVENTS_EVENT_SIZE);
+Thread t;
+int row = 0; // var to use to determine row
+
+// setup interrupt objects
+InterruptIn int1(PB_8, PullDown);
+InterruptIn int2(PB_9, PullDown);
+
+int main() {
+
+  t.start(callback(&qu, &EventQueue::dispatch_forever));
+  // RCC
+  RCC->AHB2ENR |= 6;
+  // MODER
+  GPIOB->MODER &= ~(0xF0000);
+
+  GPIOC->MODER &= ~(0xA0000);
+  GPIOC->MODER |= 0x50000;
+
+  GPIOG->MODER |= 5;
+  GPIOG->MODER &= ~(0xA);
+
+  RCC->AHB2ENR |= 0x40;
+  // set up interrupt behavior
+
+  // enable
+  //   int1.rise(&c1isr);
+  //   int2.rise(&c2isr);
+
+  int1.rise(qu.event(c1isr));
+  int2.rise(qu.event(c2isr));
+
+  int1.enable_irq();
+  int2.enable_irq();
+  while (true) { // need the polling piece
+
+    if (row == 0) {
+      row = 1;
+      GPIOC->ODR = 0x200;
+    } else {
+      row = 0;
+      GPIOC->ODR = 0x100;
+    }
+    // delay
+    thread_sleep_for(100); // 50 ms
+  }
+
+  return 0;
+}
+
+// ISR for C1 - 1 or *
+void c1isr(void) {
+  // which row
+  if (row == 0) {
+    GPIOG->ODR = 1;
+    // qu.call(printf,"*\n");
+    printf("*\n");
+  } else {
+    GPIOG->ODR = 0;
+    //  qu.call(printf,"1\n");
+    printf("1\n");
+  }
+  wait_us(500); // 500 us
+}
+
+// ISR for C2 - A or D
+void c2isr(void) {
+  // which row
+  if (row == 0) {
+    GPIOG->ODR = 2;
+    //   qu.call(printf,"D\n");
+    printf("D\n");
+  } else {
+    GPIOG->ODR = 0;
+    //    qu.call(printf,"A\n");
+    printf("A\n");
+  }
+  wait_us(500); // 500 us
+}
+
+/*
 int main()
 {
     LCD.begin();
     LCD.clear();
     return 0;
 }
+*/
 
 /*
 Checklist start

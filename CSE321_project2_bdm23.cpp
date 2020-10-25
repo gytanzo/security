@@ -20,17 +20,14 @@ Summary of File:
 
 
 #include "mbed.h"
-#include "1802.cpp"
+#include "1802.h"
 
-CSE321_LCD LCD();
+CSE321_LCD LCD(16,2,LCD_5x8DOTS,PB_9,PB_8); // PB_9 = SDA, PB_8 = SCL
 
-
-
-// main() runs in its own thread in the OS
 int main()
 {
-    LCD().begin();
-    
+    LCD.begin();
+    LCD.clear();
     return 0;
 }
 

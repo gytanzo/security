@@ -27,6 +27,10 @@ CSE321_LCD LCD(16,2,LCD_5x8DOTS,PF_0,PF_1);  // PF_0 = SDA, PF_1 = SCL
 
 void c1isr(void); // Column 1 Interrupt (1, 4, 7, *)
 void c2isr(void); // Column 2 Interrupt (2, 5, 8, 0)
+void c3isr(void); // Column 3 Interrupt (3, 6, 9, #)
+void c4isr(void); // Column 4 Interrupt (A, B, C, D))
+
+int runNumber(); // See text file for explanation
 
 EventQueue qu(32 * EVENTS_EVENT_SIZE);
 Thread t;
@@ -35,43 +39,56 @@ int row = 0; // var to use to determine row
 // setup interrupt objects
 InterruptIn int1(PB_8, PullDown);
 InterruptIn int2(PB_9, PullDown);
+InterruptIn int3(PB_10, PullDown);
+InterruptIn int4(PB_11, PullDown);
 
 int main() {
+    
     LCD.begin(); // I am pretty sure this is NOT supposed to be this high, but eh, I'll fix it later.
     LCD.clear();
-    LCD.print("test 6");
+    LCD.print("test 2");
 
     t.start(callback(&qu, &EventQueue::dispatch_forever));
     // RCC
-    RCC->AHB2ENR |= 6;
+    RCC->AHB2ENR |= 6; // Enable ports B + C
     // MODER
-    GPIOB->MODER &= ~(0xF0000);
+    GPIOB->MODER &= ~(0xFF0000); // Set input ports
 
-    GPIOC->MODER &= ~(0xA0000);
-    GPIOC->MODER |= 0x50000;
+    GPIOC->MODER &= ~(0xFF0000); // Result: 1111 1111 0000 0000 1111 1111 1111 1111. Guarantees the 0's. 
+    GPIOC->MODER |= 0x550000;    // Result: 0000 0000 0101 0101 0000 0000 0000 0000. The OUTPUTS are now what we want.
 
-    GPIOG->MODER |= 5;
-    GPIOG->MODER &= ~(0xA);
-
-    RCC->AHB2ENR |= 0x40;
     // set up interrupt behavior
 
     int1.rise(qu.event(c1isr));
     int2.rise(qu.event(c2isr));
+    int3.rise(qu.event(c3isr));
+    int4.rise(qu.event(c4isr));
 
     int1.enable_irq();
     int2.enable_irq();
+    int3.enable_irq();
+    int4.enable_irq();
     while (true) { // need the polling piece
 
-        if (row == 0) {
-        row = 1;
-        GPIOC->ODR = 0x200;
-        } else {
-        row = 0;
-        GPIOC->ODR = 0x100;
+        if (row == 0){
+            row = 1;
+            GPIOC -> ODR = 0x200; // Enable pin 8 
         }
+        else if (row == 1){
+            row = 2;
+            GPIOC -> ODR = 0x400; // Enable pin 9
+        }
+        else if (row == 2){
+            row = 3;
+            GPIOC -> ODR = 0x800; // Enable pin 10
+        }
+        else if (row == 3){
+            row = 0;
+            GPIOC -> ODR = 0x100; // Enable pin 11
+        }
+
         // delay
-        thread_sleep_for(100); // 50 ms
+        thread_sleep_for(50); // 50 ms
     }
 
     return 0;
@@ -79,46 +96,68 @@ int main() {
 
 // ISR for C1 - 1, 4, 7, or *
 void c1isr(void) {
-    // which row
     if (row == 0) {
-        GPIOG->ODR = 1;
-        printf("*\n");
+        printf("1\n"); 
     } 
     else if (row == 1){
-        GPIOG->ODR = 0;
-        // printf("7\n"); Supposed to print this
-        printf("1\n"); // For consistency, leaving this in
+        printf("4\n"); 
     }
     else if (row == 2){
-        //GPIOG->ODR=0; I don't know what this does yet. 
-        printf("4\n");
+        printf("7\n");
     }
-    else{
-        //GPIOG->ODR = 0; I still don't know what this does.
-        printf("1\n");
+    else if (row == 3) {
+        printf("*\n");
     }
     wait_us(500); // 500 us
 }
 
-// ISR for C2 - 1, 4, 7, or *
+// ISR for C1 - 2, 5, 8, 0
 void c2isr(void) {
-    // which row
     if (row == 0) {
-        GPIOG->ODR = 1;
-        printf("D\n");
+        printf("2\n"); 
     } 
     else if (row == 1){
-        GPIOG->ODR = 0;
-        // printf("C\n"); Supposed to print this
-        printf("A\n"); // For consistency, leaving this in
+        printf("5\n"); 
     }
     else if (row == 2){
-        //GPIOG->ODR=0; I don't know what this does yet. 
+        printf("8\n");
+    }
+    else if (row == 3) {
+        printf("0\n");
+    }
+    wait_us(500); // 500 us
+}
+
+// ISR for C3 - 3, 6, 9, #
+void c3isr(void) {
+    if (row == 0) {
+        printf("3\n"); 
+    } 
+    else if (row == 1){
+        printf("6\n"); 
+    }
+    else if (row == 2){
+        printf("9\n");
+    }
+    else if (row == 3) {
+        printf("#\n");
+    }
+    wait_us(500); // 500 us
+}
+
+// ISR for C4 - A, B, C, D
+void c4isr(void) {
+    if (row == 0) {
+        printf("A\n"); 
+    } 
+    else if (row == 1){
         printf("B\n");
     }
+    else if (row == 2){
+        printf("C\n");
+    }
     else{
-        //GPIOG->ODR = 0; I still don't know what this does.
-        printf("A\n");
+        printf("D\n");
     }
     wait_us(500); // 500 us
 }

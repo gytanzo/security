@@ -21,11 +21,12 @@ Summary of File:
 
 #include "mbed.h"
 #include "1802.h"
+#include <cstdint>
 
-CSE321_LCD LCD(16,2,LCD_5x8DOTS,PB_9,PB_8); // PB_9 = SDA, PB_8 = SCL
+CSE321_LCD LCD(16,2,LCD_5x8DOTS,PF_0,PF_1);  // PF_0 = SDA, PF_1 = SCL
 
-void c1isr(void);
-void c2isr(void);
+void c1isr(void); // Column 1 Interrupt (1, 4, 7, *)
+void c2isr(void); // Column 2 Interrupt (2, 5, 8, 0)
 
 EventQueue qu(32 * EVENTS_EVENT_SIZE);
 Thread t;
@@ -36,93 +37,88 @@ InterruptIn int1(PB_8, PullDown);
 InterruptIn int2(PB_9, PullDown);
 
 int main() {
-
-  t.start(callback(&qu, &EventQueue::dispatch_forever));
-  // RCC
-  RCC->AHB2ENR |= 6;
-  // MODER
-  GPIOB->MODER &= ~(0xF0000);
-
-  GPIOC->MODER &= ~(0xA0000);
-  GPIOC->MODER |= 0x50000;
-
-  GPIOG->MODER |= 5;
-  GPIOG->MODER &= ~(0xA);
-
-  RCC->AHB2ENR |= 0x40;
-  // set up interrupt behavior
-
-  // enable
-  //   int1.rise(&c1isr);
-  //   int2.rise(&c2isr);
-
-  int1.rise(qu.event(c1isr));
-  int2.rise(qu.event(c2isr));
-
-  int1.enable_irq();
-  int2.enable_irq();
-  while (true) { // need the polling piece
-
-    if (row == 0) {
-      row = 1;
-      GPIOC->ODR = 0x200;
-    } else {
-      row = 0;
-      GPIOC->ODR = 0x100;
-    }
-    // delay
-    thread_sleep_for(100); // 50 ms
-  }
-
-  return 0;
-}
-
-// ISR for C1 - 1 or *
-void c1isr(void) {
-  // which row
-  if (row == 0) {
-    GPIOG->ODR = 1;
-    // qu.call(printf,"*\n");
-    printf("*\n");
-  } else {
-    GPIOG->ODR = 0;
-    //  qu.call(printf,"1\n");
-    printf("1\n");
-  }
-  wait_us(500); // 500 us
-}
-
-// ISR for C2 - A or D
-void c2isr(void) {
-  // which row
-  if (row == 0) {
-    GPIOG->ODR = 2;
-    //   qu.call(printf,"D\n");
-    printf("D\n");
-  } else {
-    GPIOG->ODR = 0;
-    //    qu.call(printf,"A\n");
-    printf("A\n");
-  }
-  wait_us(500); // 500 us
-}
-
-/*
-int main()
-{
-    LCD.begin();
+    LCD.begin(); // I am pretty sure this is NOT supposed to be this high, but eh, I'll fix it later.
     LCD.clear();
+    LCD.print("test 6");
+
+    t.start(callback(&qu, &EventQueue::dispatch_forever));
+    // RCC
+    RCC->AHB2ENR |= 6;
+    // MODER
+    GPIOB->MODER &= ~(0xF0000);
+
+    GPIOC->MODER &= ~(0xA0000);
+    GPIOC->MODER |= 0x50000;
+
+    GPIOG->MODER |= 5;
+    GPIOG->MODER &= ~(0xA);
+
+    RCC->AHB2ENR |= 0x40;
+    // set up interrupt behavior
+
+    int1.rise(qu.event(c1isr));
+    int2.rise(qu.event(c2isr));
+
+    int1.enable_irq();
+    int2.enable_irq();
+    while (true) { // need the polling piece
+
+        if (row == 0) {
+        row = 1;
+        GPIOC->ODR = 0x200;
+        } else {
+        row = 0;
+        GPIOC->ODR = 0x100;
+        }
+        // delay
+        thread_sleep_for(100); // 50 ms
+    }
+
     return 0;
 }
-*/
 
-/*
-Checklist start
-        - Follow the flowchart in Documentation.pdf, it summarizes the logic this program should take pretty well
-        - Make sure to store the previous number and count repeats, this will make programming the password reset easier
-        - Recall that there are two reserved passwords: 9407 and 0000
-        - Try not to make the code too ugly
-        Checklist end
-        - Expected start date (on the programming portion): 10/10, if not that then the 16th
-        - Currently working on documentation, so I can't exactly start this part yet
-*/
+// ISR for C1 - 1, 4, 7, or *
+void c1isr(void) {
+    // which row
+    if (row == 0) {
+        GPIOG->ODR = 1;
+        printf("*\n");
+    } 
+    else if (row == 1){
+        GPIOG->ODR = 0;
+        // printf("7\n"); Supposed to print this
+        printf("1\n"); // For consistency, leaving this in
+    }
+    else if (row == 2){
+        //GPIOG->ODR=0; I don't know what this does yet. 
+        printf("4\n");
+    }
+    else{
+        //GPIOG->ODR = 0; I still don't know what this does.
+        printf("1\n");
+    }
+    wait_us(500); // 500 us
+}
+
+// ISR for C2 - 1, 4, 7, or *
+void c2isr(void) {
+    // which row
+    if (row == 0) {
+        GPIOG->ODR = 1;
+        printf("D\n");
+    } 
+    else if (row == 1){
+        GPIOG->ODR = 0;
+        // printf("C\n"); Supposed to print this
+        printf("A\n"); // For consistency, leaving this in
+    }
+    else if (row == 2){
+        //GPIOG->ODR=0; I don't know what this does yet. 
+        printf("B\n");
+    }
+    else{
+        //GPIOG->ODR = 0; I still don't know what this does.
+        printf("A\n");
+    }
+    wait_us(500); // 500 us
+}

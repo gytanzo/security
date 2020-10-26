@@ -33,7 +33,10 @@ void c3isr(void); // Column 3 Interrupt (3, 6, 9, #)
 void c4isr(void); // Column 4 Interrupt (A, B, C, D))
 
 void update(char *array, char input); // This will be used to store the current password.
-char password[4] = "";
+char password[4] = ""; // Store the password in here.
+
+DigitalOut blueLED(PB_7); // Set blue user LED as an output
+DigitalOut redLED(PB_14); // Set red user LED as an output
 
 EventQueue qu(32 * EVENTS_EVENT_SIZE);
 Thread t;
@@ -90,7 +93,7 @@ int main() {
         }
 
         // delay
-        thread_sleep_for(50); // 50 ms
+        thread_sleep_for(250); // 50 ms
     }
 
     return 0;
@@ -99,13 +102,19 @@ int main() {
 void update(char *array, char input){
     strncat(array, &input, 1);
     if (strlen(array) == 4){
-        if (strcmp(array, "4920") == 0){
+        if (strcmp(array, "4920") == 0){ // If password is correct...
             LCD.clear(); // Clear the display.
-            LCD.print("Unlocked.");
+            LCD.print("Unlocked."); // System is now unlocked.
+            blueLED.write(1); // Turn on the blue LED
+            redLED.write(0); // Turn off the red LED
         }
-        else {
+        else { // Else password is not correct.
             LCD.clear(); // Clear the display.
-            LCD.print("Locked.");
+            LCD.print("Locked."); // System is now locked.
+            LCD.setCursor(0, 1); // Go to second line.
+            LCD.print("Incorrect code."); // This doesn't make TOO much sense given the nature of the code, but hey, it's what the handout asks for.
+            redLED.write(1);
+            blueLED.write(0);
         }
         strcpy(array, ""); // Clear password
     }

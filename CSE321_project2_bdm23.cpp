@@ -33,8 +33,9 @@ void c4isr(void); // Column 4 Interrupt (A, B, C, D))
 void update(char *array, char input); // This will be used to update the current password.
 char password[4] = ""; // Store the password in here.
 
-DigitalOut blueLED(PB_7); // Set blue user LED as an output
-DigitalOut redLED(PB_14); // Set red user LED as an output
+DigitalOut blueLED(PB_7); // Set blue user LED as an output, used for unlocked
+DigitalOut redLED(PB_14); // Set red user LED as an output, used for locked
+DigitalOut greenLED(PC_7); // Set red user LED as an output, used to inform user input received
 
 EventQueue qu(32 * EVENTS_EVENT_SIZE); // Set up EventQueue
 Thread t; // Initialize thread to use with queue
@@ -72,25 +73,25 @@ int main() {
 
     while (true) { // need the polling piece
 
-        if (row == 0){ // Unfortunately, the pins are out of order. I couldn't find a way to fix this and it works, so I left it as is. 
-            row = 1; // Top row
+        if (row == 0){ // Top row
+            row = 1; // Go to second-to-top row
             GPIOC -> ODR = 0x200; // Enable pin 9 i.e. PC9
         }
-        else if (row == 1){
-            row = 2; // Second-to-top row
+        else if (row == 1){ // Second-to-top row
+            row = 2; // Go to second-to-bottom row
             GPIOC -> ODR = 0x400; // Enable pin 10 i.e. PC10
         }
-        else if (row == 2){
-            row = 3; // Second-to-bottom row
+        else if (row == 2){ // Second-to-bottom row
+            row = 3; // Go to bottom row
             GPIOC -> ODR = 0x800; // Enable pin 11 i.e. PC11
         }
-        else if (row == 3){
-            row = 0; // Bottom row
+        else if (row == 3){ // Bottom row
+            row = 0; // Go to top row
             GPIOC -> ODR = 0x100; // Enable pin 8 i.e. PC8
         }
 
         // delay
-        thread_sleep_for(300); // Turn off thread for 300ms. This SOUNDS high, but it was the best balance I could find between less bounces and user input speed. 
+        thread_sleep_for(200); // Turn off thread for 200ms. This SOUNDS high, but it was the best balance I could find between less bounces and user input speed. 
                                // Of course, if you try to rapidly insert numbers it doesn't work. That's the tradeoff being made here. 
     }
 
@@ -135,7 +136,9 @@ void c1isr(void) { // ISR for C1 - 1, 4, 7, or *
         printf("*\n"); // Prints * to serial out, used for testing
                        // * serves no purpose in the security system, so nothing else is done
     }
+    greenLED.write(1); // Turn green LED on, showing an input was received.
     wait_us(500); // Wait for 500 us
+    greenLED.write(0); // Turn it off. This will happen very fast, but it doesn't require any additional waiting so it works out well.
 }
 
 void c2isr(void) { // ISR for C1 - 2, 5, 8, 0
@@ -155,7 +158,9 @@ void c2isr(void) { // ISR for C1 - 2, 5, 8, 0
         printf("0\n"); // Prints 0 to serial out, used for testing
         update(password, '0'); // User inputted a 0, add to password
     }
+    greenLED.write(1); // Turn green LED on, showing an input was received.
     wait_us(500); // Wait for 500 us
+    greenLED.write(0); // Turn it off. This will happen very fast, but it doesn't require any additional waiting so it works out well.
 }
 
 void c3isr(void) { // ISR for C3 - 3, 6, 9, #
@@ -175,7 +180,9 @@ void c3isr(void) { // ISR for C3 - 3, 6, 9, #
         printf("#\n"); // Prints # to serial out, used for testing
                        // # serves no purpose in the security system, so nothing else is done
     }
+    greenLED.write(1); // Turn green LED on, showing an input was received.
     wait_us(500); // Wait for 500 us
+    greenLED.write(0); // Turn it off. This will happen very fast, but it doesn't require any additional waiting so it works out well.
 }
 
 void c4isr(void) { // ISR for C4 - A, B, C, D
@@ -195,7 +202,9 @@ void c4isr(void) { // ISR for C4 - A, B, C, D
         printf("D\n"); // Prints D to serial out, used for testing
                        // D serves no purpose in the security system, so nothing else is done
     }
+    greenLED.write(1); // Turn green LED on, showing an input was received.
     wait_us(500); // Wait for 500 us
+    greenLED.write(0); // Turn it off. This will happen very fast, but it doesn't require any additional waiting so it works out well.
 }
 
 

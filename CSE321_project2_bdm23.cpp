@@ -21,8 +21,6 @@ Summary of File:
 
 #include "mbed.h"
 #include "1802.h"
-#include <cstdint>
-#include <stdio.h>
 #include <string.h> 
 
 CSE321_LCD LCD(16,2,LCD_5x8DOTS,PF_0,PF_1);  // Initialize LCD display, PF_0 = SDA, PF_1 = SCL
